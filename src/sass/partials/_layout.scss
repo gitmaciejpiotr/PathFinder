@@ -1,0 +1,32 @@
+.splash {
+  background-image: url(../../../images/background.jpg);
+  background-position: center center;
+  background-size: cover;
+  background-attachment: fixed;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.navigation {
+  position: absolute;
+  left: 5%;
+  top: 5%;
+}
+
+.splash-inner {
+  position: absolute;
+  left: 27%;
+  top: 17%;
+  display: flex;
+  flex-direction: column;
+}
+
+.splash-inner h1 {
+  font-size: 72px;
+  font-family: $font-text;
+  color: $color-text;
+  letter-spacing: 40px;
+}
