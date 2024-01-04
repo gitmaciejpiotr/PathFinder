@@ -1,3 +1,13 @@
+#pages {
+    >* {
+        display: none;
+    }
+
+    >.active {
+        display: block;
+    }
+}
+
 .parag {
     position: absolute;
     left: 0;
