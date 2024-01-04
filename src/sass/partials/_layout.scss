@@ -1,5 +1,7 @@
 .splash {
-  background-image: url(../../../images/background.jpg);
+  background-image: 
+  // linear-gradient(to bottom, transparent, black),
+  url('../../../images/background.jpg');
   background-position: center center;
   background-size: cover;
   background-attachment: fixed;
@@ -12,8 +14,26 @@
 
 .navigation {
   position: absolute;
-  left: 5%;
-  top: 5%;
+  left: 30%;
+  top: 1.5%;
+  width: 45%;
+  display: flex;
+  justify-content: center;
+}
+
+.navigation ul {
+  width: inherit;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  list-style-type: none;
+}
+
+.navigation ul li a {
+  font-family: $font-nav;
+  color: $color-text;
+  text-decoration: none;
+  letter-spacing: 1.5px;
 }
 
 .splash-inner {
@@ -25,8 +45,25 @@
 }
 
 .splash-inner h1 {
-  font-size: 72px;
+  margin-bottom: 0;
+}
+
+.splash-inner h3 {
+  text-align: right;
+  margin-top: 0;
+  margin-right: 40px;
+}
+
+footer {
+  position: absolute;
+  top: 215%;
+  width: 100%;
+}
+
+footer p {
   font-family: $font-text;
-  color: $color-text;
-  letter-spacing: 40px;
+  font-size: 16px;
+  letter-spacing: 2px;
+  text-align: center;
+  margin-bottom: 72px;
 }

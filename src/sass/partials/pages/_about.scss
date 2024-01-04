@@ -1,0 +1,52 @@
+.parag {
+    position: absolute;
+    left: 0;
+    height: 40vh;
+    width: 100%;
+}
+
+.parag-text {
+    position: absolute;
+    text-align: left;
+}
+
+.parag-text h2 {
+    margin-bottom: 0;
+}
+
+.first-paragraph {
+    background-image: linear-gradient(to bottom, transparent, black);
+    top: 60%;
+}
+
+.first-paragraph img {
+    height: 60vh;
+    width: 40%;
+    margin-left: 10%;
+}
+
+.first-paragraph-text {
+    top: 54%;
+    left: 32%;
+}
+
+.second-paragraph {
+    top: 140%;
+}
+
+.second-paragraph img {
+    position: absolute;
+    top: 150%;
+    right: 5%;
+    height: 65vh;
+    width: 60%;
+}
+
+.second-paragraph-text {
+    top: 56%;
+    left: 12%;
+}
+
+// .text-vip {
+//     font-family: $font-text;
+// }

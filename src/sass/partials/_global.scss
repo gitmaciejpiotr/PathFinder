@@ -1,3 +1,33 @@
 body {
   margin: 0;
+  height: 200vh;
+  background-color: black;
+}
+
+h1 {
+  font-size: 72px;
+  font-family: $font-header;
+  color: $color-text;
+  letter-spacing: 40px;
+}
+
+h2 {
+  font-size: 48px;
+  font-family: $font-header-small;
+  color: $color-text;
+  letter-spacing: 8px;
+}
+
+h3 {
+  font-size: 24px;
+  font-family: $font-header;
+  color: $color-text;
+  letter-spacing: 8px;
+}
+
+p {
+  font-size: 24px;
+  font-family: $font-text;
+  color: $color-text;
+  letter-spacing: 8px;
 }

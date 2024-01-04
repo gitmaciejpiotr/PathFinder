@@ -6,17 +6,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="css/style.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 </head>
 
 <body>
     <section class="splash">
         <nav class="navigation">
-            <div class="container">
-                <ul>
-                    <li><a href="#">ABOUT</a></li>
-                    <li><a href="#">FINDER</a></li>
-                </ul>
-            </div>
+            <ul>
+                <li><a href="#">ABOUT</a></li>
+                <li><a href="#">FINDER</a></li>
+            </ul>
         </nav>
         <!-- <nav role="navigation">
       <div id="menuToggle">
@@ -42,11 +41,49 @@
     </nav> -->
         <header>
             <div class="splash-inner">
-                <h1 class="page-title">PATHFINDER</h1>
-                <h3 class="page-title-small">FOR TRAVELLERS</h3>
+                <h1>PATHFINDER</h1>
+                <h3>FOR TRAVELLERS</h3>
             </div>
         </header>
+
     </section>
+
+    <div id="pages">
+        <section id="about">
+          <div class="home-page-wrapper container"></div>
+        </section>
+        <section id="finder">
+          <div id="product-list" class="product-list container"></div>
+        </section>
+      </div>
+
+    <section class="first-paragraph parag">
+        <div data-aos="fade-up" data-aos-anchor-placement="center-center">
+            <img src="images/1.jpg" alt="">
+            <div class="first-paragraph-text parag-text" data-aos="fade-right">
+                <h2>PLAN YOUR JOURNEYS</h2>
+                <p>Pick attractions and book hotels</p>
+            </div>
+        </div>
+    </section>
+    <section class="second-paragraph parag">
+        <div data-aos="fade-right" data-aos-anchor-placement="center-center">
+            <img src="images/2.jpg" alt="">
+            <div class="second-paragraph-text parag-text" data-aos="fade-left">
+                <h2>MINIMALIZE BOREDOM</h2>
+                <p class="text-vip">Pick routes that are short and attractive</p>
+            </div>
+        </div>
+    </section>
+    <footer>
+        <p>All rights reserved</p>
+    </footer>
 </body>
+
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+    AOS.init();
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.1.0/handlebars.min.js"></script>
 
 </html>
