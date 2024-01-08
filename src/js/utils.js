@@ -5,3 +5,9 @@ utils.createDOMFromHTML = function(htmlString) {
   div.innerHTML = htmlString.trim();
   return div.firstChild;
 };
+
+utils.hasValue = (obj, value) => Object.values(obj).includes(value);
+
+utils.isEmpty = (obj) => {
+  return JSON.stringify(obj) === '{}';
+}

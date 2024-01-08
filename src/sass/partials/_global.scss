@@ -31,3 +31,15 @@ p {
   color: $color-text;
   letter-spacing: 8px;
 }
+
+.parag {
+  position: absolute;
+  left: 0;
+  height: 40vh;
+  width: 100%;
+}
+
+.parag-text {
+  position: absolute;
+  text-align: left;
+}
