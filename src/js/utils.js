@@ -10,4 +10,4 @@ utils.hasValue = (obj, value) => Object.values(obj).includes(value);
 
 utils.isEmpty = (obj) => {
   return JSON.stringify(obj) === '{}';
-}
+};

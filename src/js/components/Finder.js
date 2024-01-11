@@ -7,28 +7,32 @@ class Finder {
     const thisFinder = this;
 
     thisFinder.selectedSquares = {};
+    thisFinder.startAndEndSquares = {
+      'start': '',
+      'end': ''
+    };
     thisFinder.wrapper = element;
 
-    thisFinder.getElements(element);
-    thisFinder.render();
+    thisFinder.render(element);
+    thisFinder.getElements();
     thisFinder.initActions();
-    AOS.init();
   }
 
-  getElements(element) {
+  getElements() {
     const thisFinder = this;
 
-    thisFinder.dom = {};
-
-    thisFinder.dom.wrapper = element;
-
-    thisFinder.dom.matrixContainer = document.querySelector('.finder-wrapper');
-
+    thisFinder.dom.sectionContainer = document.querySelector('.finder-wrapper');
+    thisFinder.dom.matrix = thisFinder.dom.sectionContainer.querySelector('.matrix');
+    thisFinder.dom.bottomButton = thisFinder.dom.wrapper.querySelector('.bottom-button');
+    thisFinder.dom.allSquares = document.querySelectorAll('.square');
+    thisFinder.dom.finishSpan = thisFinder.dom.bottomButton.querySelector('#finish');
+    thisFinder.dom.computeSpan = thisFinder.dom.bottomButton.querySelector('#compute');
+    thisFinder.dom.againSpan = thisFinder.dom.bottomButton.querySelector('#again');
     // thisFinder.dom.booksList = document.querySelector('.books-list');
     // thisFinder.dom.filtersContainer = document.querySelector('.filters div');
   }
 
-  render() {
+  render(element) {
     const thisFinder = this;
 
     let generatedHTML = templates.finderPage();
@@ -40,33 +44,37 @@ class Finder {
     /* Create element using utils.createElementFromHTML */
     thisFinder.element = utils.createDOMFromHTML(generatedHTML);
 
+    thisFinder.dom = {};
+
+    thisFinder.dom.wrapper = element;
+
     let generalInnerHTML = '';
 
     for (let i = 0; i < thisFinder.element.children.length; i++) {
 
       let child = thisFinder.element.children[i];
 
-      if (child.classList.contains('matrix')){
+      if (child.classList.contains('matrix')) {
         const button = thisFinder.element.querySelector('.square');
         const row = thisFinder.element.querySelector('.row');
         const matrix = thisFinder.element.querySelector('.matrix');
         let buttons = '';
         let rows = '';
-    
-        for(let i = 0; i < 10; i++){
-    
+
+        for (let i = 0; i < 10; i++) {
+
           row.setAttribute('data-id', 1 + i);
-    
-          for(let j = 0; j < 10; j++){
+
+          for (let j = 0; j < 10; j++) {
             button.setAttribute('data-id', 1 + j);
             buttons += button.outerHTML;
           }
-    
+
           row.innerHTML = buttons;
           buttons = '';
           rows += row.outerHTML;
         }
-    
+
         matrix.innerHTML = rows;
         generalInnerHTML += matrix.outerHTML;
 
@@ -85,69 +93,59 @@ class Finder {
 
   initActions() {
     const thisFinder = this;
+    console.log(thisFinder);
+    thisFinder.addClassActiveFunc = thisFinder.addAddClassActiveFunc.bind(thisFinder);
+    thisFinder.setSelectStartAndEndModeFunc = thisFinder.addSetSelectStartAndEndModeFunc.bind(thisFinder);
+    thisFinder.setComputeShortestPathModeFunc = thisFinder.addSetComputeShortestPathModeFunc.bind(thisFinder);
 
-    thisFinder.dom.matrixContainer.addEventListener('click', function (event) {
-      event.preventDefault();
-      console.log(event.target.offsetParent.classList);
-      if (event.target.offsetParent.classList.contains('finder-parag')) {
-        // console.log('heja');
-        thisFinder.addClassActive(event);
-      }
-    });
+    thisFinder.dom.sectionContainer.addEventListener('click', thisFinder.addClassActiveFunc);
 
-    // thisFinder.dom.filtersContainer.addEventListener('click', function (event) {
-    //   thisFinder.addFilterCategory(event);
-    // });
+    thisFinder.dom.bottomButton.addEventListener('click', thisFinder.setSelectStartAndEndModeFunc);
   }
 
-  addClassActive(event){
+  addSetSelectStartAndEndModeFunc(event) {
     const thisFinder = this;
 
-    const square = new Square(event.target);
-    const squareName = square.row + ':' + square.col;
-    console.log(squareName);
+    event.preventDefault();
+    thisFinder.dom.sectionContainer.removeEventListener('click', thisFinder.addClassActiveFunc);
+    thisFinder.setSelectStartAndEndMode(event);
+  }
 
-    if (thisFinder.checkIfFitsToPattern(square, squareName)){
-      console.log('heja');
-      console.log(square);
-      thisFinder.selectedSquares[squareName] = square;
+  addAddClassActiveFunc(event) {
+    const thisFinder = this;
+
+    event.preventDefault();
+    console.log(event.target);
+    // console.log(event.target.parentElement.classList);
+    if (event.target.parentElement.classList.contains('row')) {
+      thisFinder.addClassActive(event);
+    }
+  }
+
+  addClassActive(event) {
+    const thisFinder = this;
+
+    const square = new Square(event.target, thisFinder.dom.matrix);
+
+    if (thisFinder.checkIfFitsToPattern(square)) {
+      // console.log('heja');
+      // console.log(square);
+      thisFinder.selectedSquares[square.name] = square;
       event.target.classList.add('active');
     }
   }
 
-  checkIfFitsToPattern(square, squareName){
+  checkIfFitsToPattern(square) {
     const thisFinder = this;
-    const neighnours = [];
 
-    for(let i = 0; i < 4; i++){
-      let row = 0;
-      let col = 0;
-      if (i == 0){
-        row = parseInt(square.row) - 1;
-        col = parseInt(square.col);
-      } else if (i == 1){
-        row = parseInt(square.row) + 1;
-        col = parseInt(square.col);
-      } else if (i == 2){
-        row = parseInt(square.row);
-        col = parseInt(square.col) - 1;
-      } else if (i == 3){
-        row = parseInt(square.row);
-        col = parseInt(square.col) + 1;
-      }
-
-      let neighbourName = row.toString() + ':' + col.toString();
-      neighnours.push(neighbourName);
-    }
-
-    if(thisFinder.selectedSquares.hasOwnProperty(squareName)){
+    if (thisFinder.selectedSquares.hasOwnProperty(square.name)) {
       return false;
-    } else if(utils.isEmpty(thisFinder.selectedSquares)) {
+    } else if (utils.isEmpty(thisFinder.selectedSquares)) {
       return true;
     } else {
-      for (let neighbour of neighnours){
-        console.log(neighbour);
-        if(thisFinder.selectedSquares.hasOwnProperty(neighbour)){
+      for (let neighbour of square.neighbours) {
+        // console.log(neighbour);
+        if (thisFinder.selectedSquares.hasOwnProperty(neighbour)) {
           return true;
         }
       }
@@ -155,6 +153,108 @@ class Finder {
 
     return false;
   }
+
+  setSelectStartAndEndMode() {
+    let thisFinder = this;
+
+    thisFinder.activeSquares = [];
+
+    for (let square of thisFinder.dom.allSquares) {
+      square.classList.add('noHoverEffect');
+      if (square.classList.contains('active')) {
+        thisFinder.activeSquares.push(square);
+        square.addEventListener('click', function (event) {
+          event.preventDefault();
+          thisFinder.selectStartAndEnd(event);
+        });
+      }
+    }
+
+    thisFinder.dom.finishSpan.classList.add('hidden');
+    thisFinder.dom.computeSpan.classList.remove('hidden');
+  }
+
+
+  selectStartAndEnd(event) {
+    let thisFinder = this;
+    const square = new Square(event.target, thisFinder.dom.matrix);
+    const squareDOM = event.target;
+
+    if (thisFinder.startAndEndSquares['start'] == '') {
+      thisFinder.startAndEndSquares['start'] = square;
+      squareDOM.classList.remove('noHoverEffect');
+      squareDOM.classList.add('startAndEnd');
+    } else if (thisFinder.startAndEndSquares['start'] !== '' && thisFinder.startAndEndSquares['end'] == '' && event.target !== thisFinder.startAndEndSquares['start']) {
+      thisFinder.startAndEndSquares['end'] = square;
+      for (let activeSquare of thisFinder.activeSquares) {
+        activeSquare.classList.remove('noHoverEffect');
+      }
+      squareDOM.classList.add('startAndEnd');
+      thisFinder.dom.bottomButton.removeEventListener('click', thisFinder.setSelectStartAndEndModeFunc);
+
+      thisFinder.dom.bottomButton.addEventListener('click', thisFinder.setComputeShortestPathModeFunc);
+    }
+  }
+
+  addSetComputeShortestPathModeFunc() {
+    const thisFinder = this;
+
+    thisFinder.computeShortestPath();
+
+    thisFinder.dom.computeSpan.classList.add('hidden');
+    thisFinder.dom.againSpan.classList.remove('hidden');
+  }
+
+  computeShortestPath() {
+    const thisFinder = this;
+
+    const endSquare = thisFinder.startAndEndSquares['end'];
+    const startSquare = thisFinder.startAndEndSquares['start'];
+    const markVolume = 1;
+
+    // thisFinder.startAndEndSquares['start'].element.setAttribute('mark-volume', 0);
+
+    thisFinder.giveMarkVolumeToNeighbours(endSquare, markVolume);
+
+    const startVolume = startSquare.element.getAttribute('mark-volume');
+    thisFinder.showTheShorstestPath(startSquare, startVolume);
+
+    console.log(thisFinder.activeSquares);
+  }
+
+  giveMarkVolumeToNeighbours(primeSquare, markVolume) {
+    const thisFinder = this;
+
+    primeSquare.element.setAttribute('mark-volume', markVolume);
+    markVolume = markVolume / 2;
+    delete thisFinder.activeSquares[thisFinder.activeSquares.indexOf(primeSquare.element)];
+    primeSquare.neverUsed = false;
+
+    for (let neighbour of primeSquare.neighbours) {
+      if (thisFinder.selectedSquares.hasOwnProperty(neighbour) && thisFinder.selectedSquares[neighbour].neverUsed == true && thisFinder.activeSquares.indexOf(thisFinder.selectedSquares[neighbour].element) !== -1) {
+        thisFinder.giveMarkVolumeToNeighbours(thisFinder.selectedSquares[neighbour], markVolume);
+      }
+    }
+  }
+
+  showTheShorstestPath(primeSquare, markVolume) {
+    const thisFinder = this;
+
+    for (let neighbour of primeSquare.neighbours) {
+      if (thisFinder.selectedSquares.hasOwnProperty(neighbour)) {
+        const neighbourVol = thisFinder.selectedSquares[neighbour].element.getAttribute('mark-volume');
+
+        if (neighbourVol == markVolume * 2 && primeSquare.nextSquare === null) {
+          console.log(primeSquare.element);
+          primeSquare.nextSquare = thisFinder.selectedSquares[neighbour];
+          thisFinder.selectedSquares[neighbour].element.classList.add('startAndEnd');
+          thisFinder.showTheShorstestPath(thisFinder.selectedSquares[neighbour], markVolume * 2);
+        }
+      }
+    }
+  }
 }
+
+
 
 export default Finder;

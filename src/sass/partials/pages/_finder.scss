@@ -43,6 +43,22 @@
   &.active {
     background: $color-one;
   }
+
+  &.noHoverEffect {
+    background: transparent;
+  }
+
+  &.noHoverEffect.active {
+    background: $color-one;
+  }
+
+  &.noHoverEffect.active:hover {
+    background: $color-three;
+  }
+
+  &.active.startAndEnd {
+    background: $color-three;
+  }
 }
 
 .bottom-button {
@@ -57,4 +73,11 @@
   border: none;
   letter-spacing: 2px;
   font-size: 14px;
+}
+
+/* TEXT IN BUTTON */ 
+
+.hidden {
+  visibility: hidden;
+  position: absolute;
 }
