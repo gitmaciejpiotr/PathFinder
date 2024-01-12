@@ -11,7 +11,19 @@ class Square {
 
     thisSquare.neighbours = thisSquare.getNeighbours();
     thisSquare.name = thisSquare.row + ':' + thisSquare.col;
-    thisSquare.neverUsed = true;
+    thisSquare.previousMarkedSquare = null;
+    thisSquare.markVolume = null;
+    thisSquare.markVolumeChanged = false;
+  }
+
+  setMarkVolume(volume){
+    const thisSquare = this;
+
+    if(thisSquare.markVolumeChanged == false){
+      thisSquare.markVolume = volume;
+      thisSquare.element.setAttribute('mark-volume', volume);
+      thisSquare.markVolumeChanged = true;
+    }
   }
 
   getNeighbours() {

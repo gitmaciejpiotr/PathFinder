@@ -209,50 +209,154 @@ class Finder {
     const thisFinder = this;
 
     const endSquare = thisFinder.startAndEndSquares['end'];
-    const startSquare = thisFinder.startAndEndSquares['start'];
-    const markVolume = 1;
+    endSquare.setMarkVolume(1);
+    // const startSquare = thisFinder.startAndEndSquares['start'];
+    const arrayWithSquares = [endSquare];
 
-    // thisFinder.startAndEndSquares['start'].element.setAttribute('mark-volume', 0);
+    let squaresToMark = thisFinder.giveMarkVolumeToActiveSquares(arrayWithSquares);
 
-    thisFinder.giveMarkVolumeToNeighbours(endSquare, markVolume);
+    // squaresToMark = thisFinder.giveMarkVolumeToActiveSquares(squaresToMark);
+    // squaresToMark = thisFinder.giveMarkVolumeToActiveSquares(squaresToMark);
+    // squaresToMark = thisFinder.giveMarkVolumeToActiveSquares(squaresToMark);
+    // squaresToMark = thisFinder.giveMarkVolumeToActiveSquares(squaresToMark);
 
-    const startVolume = startSquare.element.getAttribute('mark-volume');
-    thisFinder.showTheShorstestPath(startSquare, startVolume);
 
-    console.log(thisFinder.activeSquares);
-  }
+    // console.log(squaresToMark);
 
-  giveMarkVolumeToNeighbours(primeSquare, markVolume) {
-    const thisFinder = this;
-
-    primeSquare.element.setAttribute('mark-volume', markVolume);
-    markVolume = markVolume / 2;
-    delete thisFinder.activeSquares[thisFinder.activeSquares.indexOf(primeSquare.element)];
-    primeSquare.neverUsed = false;
-
-    for (let neighbour of primeSquare.neighbours) {
-      if (thisFinder.selectedSquares.hasOwnProperty(neighbour) && thisFinder.selectedSquares[neighbour].neverUsed == true && thisFinder.activeSquares.indexOf(thisFinder.selectedSquares[neighbour].element) !== -1) {
-        thisFinder.giveMarkVolumeToNeighbours(thisFinder.selectedSquares[neighbour], markVolume);
-      }
+    while (utils.isEmpty(thisFinder.selectedSquares) === false) {
+      squaresToMark = thisFinder.giveMarkVolumeToActiveSquares(squaresToMark);
+      console.log('heja');
     }
+
+
+    // thisFinder.selectedSquaresSegregated = [];
+    // const startSquare = thisFinder.startAndEndSquares['start'];
+
+    // endSquare.element.setAttribute('mark-volume', markVolume);
+    // markVolume = markVolume / 2;
+    // endSquare.previousSquare = endSquare;
+    // endSquare.setMarkVolume(1);
+
+    // for (let square in thisFinder.selectedSquares) {
+
+    //   thisFinder.giveMarkVolumeToActiveSquares(thisFinder.selectedSquares[square]);
+
+    //   // if (i === 0){
+    //   //   delete thisFinder.activeSquares[thisFinder.activeSquares.indexOf(endSquare.element)];
+    //   // }
+    // }
+    // thisFinder.selectedSquaresSegregated.push(endSquare.element);
+
+    // thisFinder.giveMarkVolumeToNeighbours(endSquare);
+
+    // const startVolume = startSquare.element.getAttribute('mark-volume');
+    // thisFinder.showTheShorstestPath(startSquare, startVolume);
+
+    // console.log(thisFinder.selectedSquaresSegregated);
+
+
   }
 
-  showTheShorstestPath(primeSquare, markVolume) {
+  giveMarkVolumeToActiveSquares(arrayWithSquares) {
     const thisFinder = this;
 
-    for (let neighbour of primeSquare.neighbours) {
-      if (thisFinder.selectedSquares.hasOwnProperty(neighbour)) {
-        const neighbourVol = thisFinder.selectedSquares[neighbour].element.getAttribute('mark-volume');
+    const newArrayWithSquares = [];
 
-        if (neighbourVol == markVolume * 2 && primeSquare.nextSquare === null) {
-          console.log(primeSquare.element);
-          primeSquare.nextSquare = thisFinder.selectedSquares[neighbour];
-          thisFinder.selectedSquares[neighbour].element.classList.add('startAndEnd');
-          thisFinder.showTheShorstestPath(thisFinder.selectedSquares[neighbour], markVolume * 2);
+    for (let square of arrayWithSquares){
+      const neighbours = square.neighbours;
+
+      for (let neighbour of neighbours){
+        if (thisFinder.selectedSquares.hasOwnProperty(neighbour)){
+          const neighbourObj = thisFinder.selectedSquares[neighbour];
+
+          newArrayWithSquares.push(neighbourObj);
+          neighbourObj.setMarkVolume(square.markVolume/2);
+          delete thisFinder.selectedSquares[neighbourObj.name];
         }
       }
+
+      delete thisFinder.selectedSquares[square.name];
     }
+
+    if (newArrayWithSquares.indexOf(thisFinder.startAndEndSquares['start']) !== -1){
+      thisFinder.selectedSquares = {};
+      return 'Finish!';
+    } else {
+      return newArrayWithSquares;
+    }
+
+
+    // if (thisFinder.activeSquares.indexOf(primeSquare.element) !== -1){
+    //   delete thisFinder.activeSquares[thisFinder.activeSquares.indexOf(primeSquare.element)];
+    // }
+
+    // for (let neighbour of primeSquare.neighbours) {
+    //   if (thisFinder.selectedSquares.hasOwnProperty(neighbour) && thisFinder.activeSquares.indexOf(thisFinder.selectedSquares[neighbour].element) !== -1) {
+    //     thisFinder.selectedSquares[neighbour].element.setAttribute('mark-volume', markVolume);
+    //     markVolume = markVolume / 2;
+    //   }
+    // }
+
+    // for (let neighbour of primeSquare.neighbours) {
+    //   if (thisFinder.selectedSquares.hasOwnProperty(neighbour) && thisFinder.activeSquares.indexOf(thisFinder.selectedSquares[neighbour].element) !== -1) {
+    //     const neighbourObj = thisFinder.selectedSquares[neighbour];
+
+    //     neighbourObj.previousSquare = primeSquare;
+    //     neighbourObj.setMarkVolume(primeSquare.markVolume/2);
+    //     thisFinder.selectedSquaresSegregated.push(primeSquare.element);
+    //     thisFinder.giveMarkVolumeToNeighbours(neighbourObj);
+    //   } else if (thisFinder.selectedSquares.hasOwnProperty(neighbour) && thisFinder.selectedSquares[neighbour].markVolume > primeSquare.markVolume * 2){
+    //     const neighbourObj = thisFinder.selectedSquares[neighbour];
+
+    //     primeSquare.markVolumeChanged = false;
+    //     primeSquare.setMarkVolume(neighbourObj.markVolume/2);
+    //     thisFinder.giveMarkVolumeToNeighbours(primeSquare);
+    //   }
+    // }
+
+    // for (let square in thisFinder.selectedSquares) {
+
+    //   const squareObj = thisFinder.selectedSquares[square];
+    //   const neighbours = squareObj.neighbours;
+    //   console.log(thisFinder.selectedSquares);
+    //   // let theBiggestMarkVolume = 0; 
+    //   // let previousSquare = null;
+
+    //   for (let neighbour of neighbours) {
+    //     if (thisFinder.selectedSquares.hasOwnProperty(neighbour)) {
+    //       if (thisFinder.selectedSquares[neighbour].markVolume == primeSquare.markVolume && thisFinder.activeSquares.indexOf(thisFinder.selectedSquares[neighbour].element) !== -1) {
+    //         const volume = primeSquare.markVolume / 2;
+
+    //         squareObj.setMarkVolume(volume);
+    //       }
+    //     }
+    //   }
+
+    // if (theBiggestMarkVolume !== 0) {
+    //   const volume = thisFinder.selectedSquares[previousSquare].markVolume / 2;
+
+    //   squareObj.setMarkVolume(volume);
+    //   delete thisFinder.activeSquares[thisFinder.activeSquares.indexOf(squareObj.element)];
+    // }
+    // }
   }
+
+  // showTheShorstestPath(primeSquare, markVolume) {
+  //   const thisFinder = this;
+
+  //   for (let neighbour of primeSquare.neighbours) {
+  //     if (thisFinder.selectedSquares.hasOwnProperty(neighbour)) {
+  //       const neighbourVol = thisFinder.selectedSquares[neighbour].element.getAttribute('mark-volume');
+
+  //       if (neighbourVol == markVolume * 2) {
+  //         console.log(primeSquare.element);
+  //         primeSquare.nextSquare = thisFinder.selectedSquares[neighbour];
+  //         thisFinder.selectedSquares[neighbour].element.classList.add('startAndEnd');
+  //         thisFinder.showTheShorstestPath(thisFinder.selectedSquares[neighbour], markVolume * 2);
+  //       }
+  //     }
+  //   }
+  // }
 }
 
 
