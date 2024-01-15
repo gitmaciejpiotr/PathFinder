@@ -6,7 +6,7 @@ class AboutPage {
     const thisAboutPage = this;
 
     thisAboutPage.render(element);
-    AOS.init();
+    // AOS.init();
   }
 
   render(element) {

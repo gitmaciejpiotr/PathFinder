@@ -6,11 +6,6 @@ class Finder {
   constructor(element) {
     const thisFinder = this;
 
-    thisFinder.selectedSquares = {};
-    thisFinder.startAndEndSquares = {
-      'start': '',
-      'end': ''
-    };
     thisFinder.wrapper = element;
 
     thisFinder.render(element);
@@ -43,6 +38,14 @@ class Finder {
 
     /* Create element using utils.createElementFromHTML */
     thisFinder.element = utils.createDOMFromHTML(generatedHTML);
+
+    thisFinder.selectedSquares = {};
+    thisFinder.squaresInOrder = {};
+    thisFinder.startAndEndSquares = {
+      'start': '',
+      'end': ''
+    };
+    thisFinder.activeSquares = [];
 
     thisFinder.dom = {};
 
@@ -93,14 +96,16 @@ class Finder {
 
   initActions() {
     const thisFinder = this;
-    console.log(thisFinder);
     thisFinder.addClassActiveFunc = thisFinder.addAddClassActiveFunc.bind(thisFinder);
     thisFinder.setSelectStartAndEndModeFunc = thisFinder.addSetSelectStartAndEndModeFunc.bind(thisFinder);
     thisFinder.setComputeShortestPathModeFunc = thisFinder.addSetComputeShortestPathModeFunc.bind(thisFinder);
 
+
     thisFinder.dom.sectionContainer.addEventListener('click', thisFinder.addClassActiveFunc);
 
     thisFinder.dom.bottomButton.addEventListener('click', thisFinder.setSelectStartAndEndModeFunc);
+
+    thisFinder.dom.bottomButton.innerHTML = 'FINISH DRAWING';
   }
 
   addSetSelectStartAndEndModeFunc(event) {
@@ -115,8 +120,6 @@ class Finder {
     const thisFinder = this;
 
     event.preventDefault();
-    console.log(event.target);
-    // console.log(event.target.parentElement.classList);
     if (event.target.parentElement.classList.contains('row')) {
       thisFinder.addClassActive(event);
     }
@@ -124,12 +127,14 @@ class Finder {
 
   addClassActive(event) {
     const thisFinder = this;
-
     const square = new Square(event.target, thisFinder.dom.matrix);
 
+    thisFinder.dom.bottomButton.removeEventListener('click', thisFinder.setResetAppFunc);
+
+    // thisFinder.dom.computeSpan = thisFinder.dom.computeSpan.classList.add('hidden');
+    // thisFinder.dom.againSpan = thisFinder.dom.againSpan.classList.remove('hidden');
+
     if (thisFinder.checkIfFitsToPattern(square)) {
-      // console.log('heja');
-      // console.log(square);
       thisFinder.selectedSquares[square.name] = square;
       event.target.classList.add('active');
     }
@@ -144,7 +149,6 @@ class Finder {
       return true;
     } else {
       for (let neighbour of square.neighbours) {
-        // console.log(neighbour);
         if (thisFinder.selectedSquares.hasOwnProperty(neighbour)) {
           return true;
         }
@@ -157,7 +161,7 @@ class Finder {
   setSelectStartAndEndMode() {
     let thisFinder = this;
 
-    thisFinder.activeSquares = [];
+    thisFinder.dom.bottomButton.innerHTML = 'COMPUTE';
 
     for (let square of thisFinder.dom.allSquares) {
       square.classList.add('noHoverEffect');
@@ -169,9 +173,6 @@ class Finder {
         });
       }
     }
-
-    thisFinder.dom.finishSpan.classList.add('hidden');
-    thisFinder.dom.computeSpan.classList.remove('hidden');
   }
 
 
@@ -196,13 +197,11 @@ class Finder {
     }
   }
 
-  addSetComputeShortestPathModeFunc() {
+  addSetComputeShortestPathModeFunc(event) {
     const thisFinder = this;
 
+    event.preventDefault();
     thisFinder.computeShortestPath();
-
-    thisFinder.dom.computeSpan.classList.add('hidden');
-    thisFinder.dom.againSpan.classList.remove('hidden');
   }
 
   computeShortestPath() {
@@ -210,51 +209,31 @@ class Finder {
 
     const endSquare = thisFinder.startAndEndSquares['end'];
     endSquare.setMarkVolume(1);
-    // const startSquare = thisFinder.startAndEndSquares['start'];
+    const startSquare = thisFinder.startAndEndSquares['start'];
     const arrayWithSquares = [endSquare];
 
     let squaresToMark = thisFinder.giveMarkVolumeToActiveSquares(arrayWithSquares);
 
-    // squaresToMark = thisFinder.giveMarkVolumeToActiveSquares(squaresToMark);
-    // squaresToMark = thisFinder.giveMarkVolumeToActiveSquares(squaresToMark);
-    // squaresToMark = thisFinder.giveMarkVolumeToActiveSquares(squaresToMark);
-    // squaresToMark = thisFinder.giveMarkVolumeToActiveSquares(squaresToMark);
-
-
-    // console.log(squaresToMark);
 
     while (utils.isEmpty(thisFinder.selectedSquares) === false) {
       squaresToMark = thisFinder.giveMarkVolumeToActiveSquares(squaresToMark);
-      console.log('heja');
     }
 
+    const startSquareMarkValue = thisFinder.startAndEndSquares['start'].element.getAttribute('mark-volume');
+    thisFinder.startAndEndSquares['start'].setMarkVolume(startSquareMarkValue);
 
-    // thisFinder.selectedSquaresSegregated = [];
-    // const startSquare = thisFinder.startAndEndSquares['start'];
+    let squareToShow = thisFinder.showTheShortestPath(startSquare);
 
-    // endSquare.element.setAttribute('mark-volume', markVolume);
-    // markVolume = markVolume / 2;
-    // endSquare.previousSquare = endSquare;
-    // endSquare.setMarkVolume(1);
+    do {
+      squareToShow = thisFinder.showTheShortestPath(squareToShow);
+    } while (squareToShow !== endSquare);
 
-    // for (let square in thisFinder.selectedSquares) {
+    thisFinder.dom.bottomButton.innerHTML = 'START AGAIN';
 
-    //   thisFinder.giveMarkVolumeToActiveSquares(thisFinder.selectedSquares[square]);
-
-    //   // if (i === 0){
-    //   //   delete thisFinder.activeSquares[thisFinder.activeSquares.indexOf(endSquare.element)];
-    //   // }
-    // }
-    // thisFinder.selectedSquaresSegregated.push(endSquare.element);
-
-    // thisFinder.giveMarkVolumeToNeighbours(endSquare);
-
-    // const startVolume = startSquare.element.getAttribute('mark-volume');
-    // thisFinder.showTheShorstestPath(startSquare, startVolume);
-
-    // console.log(thisFinder.selectedSquaresSegregated);
-
-
+    thisFinder.dom.bottomButton.removeEventListener('click', thisFinder.setComputeShortestPathModeFunc);
+    // thisFinder.dom.sectionContainer.addEventListener('click', thisFinder.addClassActiveFunc);
+    thisFinder.setResetAppFunc = thisFinder.addSetResetAppFunc.bind(thisFinder);
+    thisFinder.dom.bottomButton.addEventListener('click', thisFinder.setResetAppFunc);
   }
 
   giveMarkVolumeToActiveSquares(arrayWithSquares) {
@@ -262,15 +241,17 @@ class Finder {
 
     const newArrayWithSquares = [];
 
-    for (let square of arrayWithSquares){
+    for (let square of arrayWithSquares) {
       const neighbours = square.neighbours;
 
-      for (let neighbour of neighbours){
-        if (thisFinder.selectedSquares.hasOwnProperty(neighbour)){
+      for (let neighbour of neighbours) {
+        if (thisFinder.selectedSquares.hasOwnProperty(neighbour)) {
           const neighbourObj = thisFinder.selectedSquares[neighbour];
 
           newArrayWithSquares.push(neighbourObj);
-          neighbourObj.setMarkVolume(square.markVolume/2);
+          neighbourObj.setMarkVolume(square.markVolume / 2);
+          neighbourObj.setPreviousMarkedSquare(square);
+          thisFinder.squaresInOrder[neighbourObj.name] = neighbourObj;
           delete thisFinder.selectedSquares[neighbourObj.name];
         }
       }
@@ -278,85 +259,41 @@ class Finder {
       delete thisFinder.selectedSquares[square.name];
     }
 
-    if (newArrayWithSquares.indexOf(thisFinder.startAndEndSquares['start']) !== -1){
-      thisFinder.selectedSquares = {};
-      return 'Finish!';
-    } else {
-      return newArrayWithSquares;
-    }
 
-
-    // if (thisFinder.activeSquares.indexOf(primeSquare.element) !== -1){
-    //   delete thisFinder.activeSquares[thisFinder.activeSquares.indexOf(primeSquare.element)];
-    // }
-
-    // for (let neighbour of primeSquare.neighbours) {
-    //   if (thisFinder.selectedSquares.hasOwnProperty(neighbour) && thisFinder.activeSquares.indexOf(thisFinder.selectedSquares[neighbour].element) !== -1) {
-    //     thisFinder.selectedSquares[neighbour].element.setAttribute('mark-volume', markVolume);
-    //     markVolume = markVolume / 2;
-    //   }
-    // }
-
-    // for (let neighbour of primeSquare.neighbours) {
-    //   if (thisFinder.selectedSquares.hasOwnProperty(neighbour) && thisFinder.activeSquares.indexOf(thisFinder.selectedSquares[neighbour].element) !== -1) {
-    //     const neighbourObj = thisFinder.selectedSquares[neighbour];
-
-    //     neighbourObj.previousSquare = primeSquare;
-    //     neighbourObj.setMarkVolume(primeSquare.markVolume/2);
-    //     thisFinder.selectedSquaresSegregated.push(primeSquare.element);
-    //     thisFinder.giveMarkVolumeToNeighbours(neighbourObj);
-    //   } else if (thisFinder.selectedSquares.hasOwnProperty(neighbour) && thisFinder.selectedSquares[neighbour].markVolume > primeSquare.markVolume * 2){
-    //     const neighbourObj = thisFinder.selectedSquares[neighbour];
-
-    //     primeSquare.markVolumeChanged = false;
-    //     primeSquare.setMarkVolume(neighbourObj.markVolume/2);
-    //     thisFinder.giveMarkVolumeToNeighbours(primeSquare);
-    //   }
-    // }
-
-    // for (let square in thisFinder.selectedSquares) {
-
-    //   const squareObj = thisFinder.selectedSquares[square];
-    //   const neighbours = squareObj.neighbours;
-    //   console.log(thisFinder.selectedSquares);
-    //   // let theBiggestMarkVolume = 0; 
-    //   // let previousSquare = null;
-
-    //   for (let neighbour of neighbours) {
-    //     if (thisFinder.selectedSquares.hasOwnProperty(neighbour)) {
-    //       if (thisFinder.selectedSquares[neighbour].markVolume == primeSquare.markVolume && thisFinder.activeSquares.indexOf(thisFinder.selectedSquares[neighbour].element) !== -1) {
-    //         const volume = primeSquare.markVolume / 2;
-
-    //         squareObj.setMarkVolume(volume);
-    //       }
-    //     }
-    //   }
-
-    // if (theBiggestMarkVolume !== 0) {
-    //   const volume = thisFinder.selectedSquares[previousSquare].markVolume / 2;
-
-    //   squareObj.setMarkVolume(volume);
-    //   delete thisFinder.activeSquares[thisFinder.activeSquares.indexOf(squareObj.element)];
-    // }
-    // }
+    return newArrayWithSquares;
   }
 
-  // showTheShorstestPath(primeSquare, markVolume) {
-  //   const thisFinder = this;
+  showTheShortestPath(consideredSquare) {
+    const thisFinder = this;
 
-  //   for (let neighbour of primeSquare.neighbours) {
-  //     if (thisFinder.selectedSquares.hasOwnProperty(neighbour)) {
-  //       const neighbourVol = thisFinder.selectedSquares[neighbour].element.getAttribute('mark-volume');
+    if (consideredSquare == undefined) {
+      return thisFinder.startAndEndSquares['end'];
+    } else if (consideredSquare !== thisFinder.startAndEndSquares['start']) {
+      consideredSquare.element.classList.add('startAndEnd');
+    }
 
-  //       if (neighbourVol == markVolume * 2) {
-  //         console.log(primeSquare.element);
-  //         primeSquare.nextSquare = thisFinder.selectedSquares[neighbour];
-  //         thisFinder.selectedSquares[neighbour].element.classList.add('startAndEnd');
-  //         thisFinder.showTheShorstestPath(thisFinder.selectedSquares[neighbour], markVolume * 2);
-  //       }
-  //     }
-  //   }
-  // }
+    for (let neighbour of consideredSquare.neighbours) {
+
+      if (thisFinder.squaresInOrder[neighbour] !== undefined) {
+        if (thisFinder.squaresInOrder[neighbour].markVolume == consideredSquare.markVolume * 2 && thisFinder.squaresInOrder[neighbour].shown == false) {
+          const neighbourObj = thisFinder.squaresInOrder[neighbour];
+          thisFinder.squaresInOrder[neighbour].shown = true;
+
+          return neighbourObj;
+        }
+      }
+    }
+  }
+
+  addSetResetAppFunc(event){
+    const thisFinder = this;
+
+    event.preventDefault();
+
+    thisFinder.render(thisFinder.wrapper);
+    thisFinder.getElements();
+    thisFinder.initActions();
+  }
 }
 
 
