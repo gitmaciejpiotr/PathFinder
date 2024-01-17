@@ -46,6 +46,7 @@ class Finder {
       'end': ''
     };
     thisFinder.activeSquares = [];
+    thisFinder.previousClickedSqaure = null;
 
     thisFinder.dom = {};
 
@@ -130,21 +131,34 @@ class Finder {
     const square = new Square(event.target, thisFinder.dom.matrix);
 
     thisFinder.dom.bottomButton.removeEventListener('click', thisFinder.setResetAppFunc);
+    if (thisFinder.previousClickedSqaure !== null) {
+      thisFinder.previousClickedSqaure.element.classList.remove('noHoverEffect');
+    }
 
     // thisFinder.dom.computeSpan = thisFinder.dom.computeSpan.classList.add('hidden');
     // thisFinder.dom.againSpan = thisFinder.dom.againSpan.classList.remove('hidden');
 
     if (thisFinder.checkIfFitsToPattern(square)) {
       thisFinder.selectedSquares[square.name] = square;
+      thisFinder.activeSquares.push(square.element);
       event.target.classList.add('active');
     }
+
+    thisFinder.previousClickedSqaure = square;
   }
 
   checkIfFitsToPattern(square) {
     const thisFinder = this;
 
     if (thisFinder.selectedSquares.hasOwnProperty(square.name)) {
-      return false;
+      if (thisFinder.checkIfSelectedAreaIsNotCut(square)) {
+        square.element.classList.remove('active');
+        square.element.classList.add('noHoverEffect');
+        delete thisFinder.selectedSquares[square.name];
+        return false;
+      } else {
+        return false;
+      }
     } else if (utils.isEmpty(thisFinder.selectedSquares)) {
       return true;
     } else {
@@ -158,8 +172,66 @@ class Finder {
     return false;
   }
 
+  checkIfSelectedAreaIsNotCut(square) {
+    const thisFinder = this;
+
+    const activeNeighbours = [];
+
+    for (let neighbour of square.neighbours) {
+      if (thisFinder.selectedSquares.hasOwnProperty(neighbour)) {
+        activeNeighbours.push(thisFinder.selectedSquares[neighbour]);
+      }
+    }
+
+    if (activeNeighbours.length == 1){
+      return true;
+    } else {
+      const activeSquaresToDelete = [];
+      let returnFlag = true;
+
+      for (let activeSquare of thisFinder.activeSquares) {
+        activeSquaresToDelete.push(activeSquare);
+      }
+
+      delete activeSquaresToDelete[activeSquaresToDelete.indexOf(square.element)];
+      // square.markVolume = 0;
+      activeNeighbours[0].markVolume = 0;
+      thisFinder.giveMarkToSquares(activeNeighbours[0], activeSquaresToDelete);
+
+      for(let activeSquare in thisFinder.selectedSquares){
+        console.log(thisFinder.selectedSquares[activeSquare]);
+        // console.log(square);
+      }
+
+      for(let activeSquare in thisFinder.selectedSquares){
+        if(thisFinder.selectedSquares[activeSquare].markVolume == null && thisFinder.selectedSquares[activeSquare].name !== square.name){
+          returnFlag = false;
+          console.log('heja');
+          console.log(thisFinder.selectedSquares[activeSquare]);
+          console.log(square);
+        }
+        thisFinder.selectedSquares[activeSquare].markVolume = null;
+      }
+
+      return returnFlag;
+    }
+  }
+
+  giveMarkToSquares(square, activeSquaresToDelete) {
+    const thisFinder = this;
+
+    delete activeSquaresToDelete[activeSquaresToDelete.indexOf(square.element)];
+
+    for (let neighbour of square.neighbours) {
+      if (thisFinder.selectedSquares.hasOwnProperty(neighbour) && activeSquaresToDelete.indexOf(thisFinder.selectedSquares[neighbour].element) !== -1) {
+        thisFinder.selectedSquares[neighbour].markVolume = square.markVolume;
+        thisFinder.giveMarkToSquares(thisFinder.selectedSquares[neighbour], activeSquaresToDelete);
+      }
+    }
+  }
+
   setSelectStartAndEndMode() {
-    let thisFinder = this;
+    const thisFinder = this;
 
     thisFinder.dom.bottomButton.innerHTML = 'COMPUTE';
 
@@ -177,7 +249,7 @@ class Finder {
 
 
   selectStartAndEnd(event) {
-    let thisFinder = this;
+    const thisFinder = this;
     const square = new Square(event.target, thisFinder.dom.matrix);
     const squareDOM = event.target;
 
@@ -285,7 +357,7 @@ class Finder {
     }
   }
 
-  addSetResetAppFunc(event){
+  addSetResetAppFunc(event) {
     const thisFinder = this;
 
     event.preventDefault();

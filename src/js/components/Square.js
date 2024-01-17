@@ -61,14 +61,14 @@ class Square {
         row = parseInt(thisSquare.row) - 1;
         col = parseInt(thisSquare.col);
       } else if (i == 1) {
-        row = parseInt(thisSquare.row) + 1;
-        col = parseInt(thisSquare.col);
-      } else if (i == 2) {
-        row = parseInt(thisSquare.row);
-        col = parseInt(thisSquare.col) - 1;
-      } else if (i == 3) {
         row = parseInt(thisSquare.row);
         col = parseInt(thisSquare.col) + 1;
+      } else if (i == 2) {
+        row = parseInt(thisSquare.row) + 1;
+        col = parseInt(thisSquare.col);
+      } else if (i == 3) {
+        row = parseInt(thisSquare.row);
+        col = parseInt(thisSquare.col) - 1;
       }
 
       if (row < 11 && row > 0 && col < 11 && col > 0){
