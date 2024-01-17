@@ -1,25 +1,15 @@
-#pages {
-  >* {
-    display: none;
-  }
-
-  >.active {
-    display: block;
-  }
-}
-
 .parag-text h2 {
   margin-bottom: 0;
 }
 
 .first-paragraph {
   background-image: linear-gradient(to bottom, transparent, black);
-  top: 60%;
+  top: 60vh;
 }
 
 .first-paragraph img {
   height: 60vh;
-  width: 40%;
+  width: 640px;
   margin-left: 10%;
 }
 
@@ -37,7 +27,7 @@
   top: 150%;
   right: 5%;
   height: 65vh;
-  width: 60%;
+  width: 960px;
 }
 
 .second-paragraph-text {
@@ -45,6 +35,6 @@
   left: 12%;
 }
 
-// .text-vip {
-//     font-family: $font-text;
-// }
+@media (max-width: 1250px) {
+
+}

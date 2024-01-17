@@ -33,7 +33,7 @@
 .square {
   width: 50px;
   height: 50px;
-  border: 1px solid white;
+  border: 1.25px solid white;
   background: none;
 
   &:hover {
@@ -59,6 +59,14 @@
   &.active.startAndEnd {
     background: $color-three;
   }
+
+  &.proposed {
+    background: $color-six;
+  }
+
+  &.proposed:hover {
+    background: $color-one;
+  }
 }
 
 .bottom-button {
@@ -66,7 +74,7 @@
   top: 245%;
   left: 45%;
   height: 45px;
-  width: 165px;
+  width: 185px;
   background: $color-one;
   color: $color-text;
   font-family: $font-text;

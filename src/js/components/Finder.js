@@ -20,9 +20,7 @@ class Finder {
     thisFinder.dom.matrix = thisFinder.dom.sectionContainer.querySelector('.matrix');
     thisFinder.dom.bottomButton = thisFinder.dom.wrapper.querySelector('.bottom-button');
     thisFinder.dom.allSquares = document.querySelectorAll('.square');
-    thisFinder.dom.finishSpan = thisFinder.dom.bottomButton.querySelector('#finish');
-    thisFinder.dom.computeSpan = thisFinder.dom.bottomButton.querySelector('#compute');
-    thisFinder.dom.againSpan = thisFinder.dom.bottomButton.querySelector('#again');
+    thisFinder.dom.header = thisFinder.dom.sectionContainer.querySelector('.parag-text h2');
     // thisFinder.dom.booksList = document.querySelector('.books-list');
     // thisFinder.dom.filtersContainer = document.querySelector('.filters div');
   }
@@ -107,6 +105,7 @@ class Finder {
     thisFinder.dom.bottomButton.addEventListener('click', thisFinder.setSelectStartAndEndModeFunc);
 
     thisFinder.dom.bottomButton.innerHTML = 'FINISH DRAWING';
+    thisFinder.dom.header.innerHTML = 'DRAW ROUTES';
   }
 
   addSetSelectStartAndEndModeFunc(event) {
@@ -141,7 +140,22 @@ class Finder {
     if (thisFinder.checkIfFitsToPattern(square)) {
       thisFinder.selectedSquares[square.name] = square;
       thisFinder.activeSquares.push(square.element);
+      event.target.classList.remove('proposed');
       event.target.classList.add('active');
+
+      for (let neighbour of square.neighbours) {
+        if (neighbour !== null) {
+          const data = neighbour.split(':');
+          const row = data[0];
+          const col = data[1];
+          const rowDOM = thisFinder.dom.matrix.querySelector('.row[data-id = "' + row + '"]');
+          const neighbourDOM = rowDOM.querySelector('.square[data-id = "' + col + '"]');
+          // console.log(neighbourDOM);
+          if (!neighbourDOM.classList.contains('active')) {
+            neighbourDOM.classList.add('proposed');
+          }
+        }
+      }
     }
 
     thisFinder.previousClickedSqaure = square;
@@ -154,7 +168,22 @@ class Finder {
       if (thisFinder.checkIfSelectedAreaIsNotCut(square)) {
         square.element.classList.remove('active');
         square.element.classList.add('noHoverEffect');
+        square.element.classList.add('proposed');
         delete thisFinder.selectedSquares[square.name];
+        const index = thisFinder.activeSquares.indexOf(square.element);
+        thisFinder.activeSquares = thisFinder.activeSquares.slice(0, index).concat(thisFinder.activeSquares.slice(index + 1));
+        let allActiveSquaresNeighbours = thisFinder.getAllActiveSquaresNeighboursIntoArray(square);
+        for (let neighbour of square.neighbours) {
+          if (allActiveSquaresNeighbours.indexOf(neighbour) == -1 && neighbour !== null) {
+            const data = neighbour.split(':');
+            const row = data[0];
+            const col = data[1];
+            const rowDOM = thisFinder.dom.matrix.querySelector('.row[data-id = "' + row + '"]');
+            const neighbourDOM = rowDOM.querySelector('.square[data-id = "' + col + '"]');
+            // console.log(neighbourDOM);
+            neighbourDOM.classList.remove('proposed');
+          }
+        }
         return false;
       } else {
         return false;
@@ -172,6 +201,22 @@ class Finder {
     return false;
   }
 
+  getAllActiveSquaresNeighboursIntoArray(square) {
+    const thisFinder = this;
+
+    const allActiveSqauresNeighbours = [];
+
+    for (let activeSquare in thisFinder.selectedSquares) {
+      if (thisFinder.selectedSquares[activeSquare].name !== square.name) {
+        for (let neighbour of thisFinder.selectedSquares[activeSquare].neighbours) {
+          allActiveSqauresNeighbours.push(neighbour);
+        }
+      }
+    }
+
+    return allActiveSqauresNeighbours;
+  }
+
   checkIfSelectedAreaIsNotCut(square) {
     const thisFinder = this;
 
@@ -183,7 +228,7 @@ class Finder {
       }
     }
 
-    if (activeNeighbours.length == 1){
+    if (activeNeighbours.length == 1) {
       return true;
     } else {
       const activeSquaresToDelete = [];
@@ -198,20 +243,19 @@ class Finder {
       activeNeighbours[0].markVolume = 0;
       thisFinder.giveMarkToSquares(activeNeighbours[0], activeSquaresToDelete);
 
-      for(let activeSquare in thisFinder.selectedSquares){
-        console.log(thisFinder.selectedSquares[activeSquare]);
-        // console.log(square);
-      }
+      // for (let activeSquare in thisFinder.selectedSquares) {
+      //   console.log(thisFinder.selectedSquares[activeSquare]);
+      //   // console.log(square);
+      // }
 
-      for(let activeSquare in thisFinder.selectedSquares){
-        if(thisFinder.selectedSquares[activeSquare].markVolume == null && thisFinder.selectedSquares[activeSquare].name !== square.name){
+      for (let activeSquare in thisFinder.selectedSquares) {
+        if (thisFinder.selectedSquares[activeSquare].markVolume == null && thisFinder.selectedSquares[activeSquare].name !== square.name) {
           returnFlag = false;
-          console.log('heja');
-          console.log(thisFinder.selectedSquares[activeSquare]);
-          console.log(square);
         }
         thisFinder.selectedSquares[activeSquare].markVolume = null;
+        // console.log(thisFinder.selectedSquares[activeSquare]);
       }
+      console.log(' ');
 
       return returnFlag;
     }
@@ -221,6 +265,7 @@ class Finder {
     const thisFinder = this;
 
     delete activeSquaresToDelete[activeSquaresToDelete.indexOf(square.element)];
+    console.log(activeSquaresToDelete);
 
     for (let neighbour of square.neighbours) {
       if (thisFinder.selectedSquares.hasOwnProperty(neighbour) && activeSquaresToDelete.indexOf(thisFinder.selectedSquares[neighbour].element) !== -1) {
@@ -234,9 +279,11 @@ class Finder {
     const thisFinder = this;
 
     thisFinder.dom.bottomButton.innerHTML = 'COMPUTE';
+    thisFinder.dom.header.innerHTML = 'PICK START AND FINISH';
 
     for (let square of thisFinder.dom.allSquares) {
       square.classList.add('noHoverEffect');
+      square.classList.remove('proposed');
       if (square.classList.contains('active')) {
         thisFinder.activeSquares.push(square);
         square.addEventListener('click', function (event) {
@@ -301,6 +348,7 @@ class Finder {
     } while (squareToShow !== endSquare);
 
     thisFinder.dom.bottomButton.innerHTML = 'START AGAIN';
+    thisFinder.dom.header.innerHTML = 'THE BEST ROUTE IS...';
 
     thisFinder.dom.bottomButton.removeEventListener('click', thisFinder.setComputeShortestPathModeFunc);
     // thisFinder.dom.sectionContainer.addEventListener('click', thisFinder.addClassActiveFunc);

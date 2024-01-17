@@ -1,3 +1,13 @@
+#pages {
+  >* {
+    display: none;
+  }
+
+  >.active {
+    display: block;
+  }
+}
+
 .splash {
   background-image: // linear-gradient(to bottom, transparent, black),
   url('../../../images/background.jpg');
@@ -65,4 +75,16 @@ footer p {
   letter-spacing: 2px;
   text-align: center;
   margin-bottom: 72px;
+}
+
+@media (max-width: 1260px) {
+  .splash-inner {
+    left: 12vw;
+  }
+}
+
+@media (max-width: 1150px) {
+  .splash-inner {
+    left: 12vw;
+  }
 }

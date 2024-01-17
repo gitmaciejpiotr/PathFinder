@@ -3,10 +3,6 @@
   src: url('../../fonts/SourceSansPro-Black.ttf') format('ttf');
 }
 @font-face {
-  font-family: 'Source Sans Pro Bold';
-  src: url('../../fonts/source-sans-pro.bold.ttf') format('ttf');
-}
-@font-face {
   font-family: 'Source Sans Pro Regular';
   src: url('../../fonts/SourceSansPro-Regular.ttf') format('ttf');
 }
@@ -16,6 +12,6 @@
 }
 
 $font-header: 'Source Sans Pro Black';
-$font-text: 'Source Sans Pro Bold';
+$font-text: 'Source Sans 3', sans-serif;
 $font-header-small: 'Source Sans Pro Regular';
 $font-nav: 'Source Sans Pro Semibold';
