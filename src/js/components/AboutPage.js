@@ -18,10 +18,8 @@ class AboutPage {
 
     thisAboutPage.dom.wrapper = element;
 
-    /* Create element using utils.createElementFromHTML */
     thisAboutPage.element = utils.createDOMFromHTML(generatedHTML);
 
-    /* Add element to #menu */
     thisAboutPage.dom.wrapper.innerHTML = generatedHTML;
   }
 }

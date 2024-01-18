@@ -21,8 +21,6 @@ class Finder {
     thisFinder.dom.bottomButton = thisFinder.dom.wrapper.querySelector('.bottom-button');
     thisFinder.dom.allSquares = document.querySelectorAll('.square');
     thisFinder.dom.header = thisFinder.dom.sectionContainer.querySelector('.parag-text h2');
-    // thisFinder.dom.booksList = document.querySelector('.books-list');
-    // thisFinder.dom.filtersContainer = document.querySelector('.filters div');
   }
 
   render(element) {
@@ -30,11 +28,6 @@ class Finder {
 
     let generatedHTML = templates.finderPage();
 
-    // thisFinder.dom = {};
-
-    // thisFinder.dom.wrapper = element;
-
-    /* Create element using utils.createElementFromHTML */
     thisFinder.element = utils.createDOMFromHTML(generatedHTML);
 
     thisFinder.selectedSquares = {};
@@ -89,7 +82,6 @@ class Finder {
 
     thisFinder.element.innerHTML = generalInnerHTML;
 
-    /* Add element to #menu */
     thisFinder.dom.wrapper.innerHTML = thisFinder.element.outerHTML;
   }
 
@@ -134,9 +126,6 @@ class Finder {
       thisFinder.previousClickedSqaure.element.classList.remove('noHoverEffect');
     }
 
-    // thisFinder.dom.computeSpan = thisFinder.dom.computeSpan.classList.add('hidden');
-    // thisFinder.dom.againSpan = thisFinder.dom.againSpan.classList.remove('hidden');
-
     if (thisFinder.checkIfFitsToPattern(square)) {
       thisFinder.selectedSquares[square.name] = square;
       thisFinder.activeSquares.push(square.element);
@@ -150,7 +139,6 @@ class Finder {
           const col = data[1];
           const rowDOM = thisFinder.dom.matrix.querySelector('.row[data-id = "' + row + '"]');
           const neighbourDOM = rowDOM.querySelector('.square[data-id = "' + col + '"]');
-          // console.log(neighbourDOM);
           if (!neighbourDOM.classList.contains('active')) {
             neighbourDOM.classList.add('proposed');
           }
@@ -180,7 +168,6 @@ class Finder {
             const col = data[1];
             const rowDOM = thisFinder.dom.matrix.querySelector('.row[data-id = "' + row + '"]');
             const neighbourDOM = rowDOM.querySelector('.square[data-id = "' + col + '"]');
-            // console.log(neighbourDOM);
             neighbourDOM.classList.remove('proposed');
           }
         }
@@ -239,21 +226,14 @@ class Finder {
       }
 
       delete activeSquaresToDelete[activeSquaresToDelete.indexOf(square.element)];
-      // square.markVolume = 0;
       activeNeighbours[0].markVolume = 0;
       thisFinder.giveMarkToSquares(activeNeighbours[0], activeSquaresToDelete);
-
-      // for (let activeSquare in thisFinder.selectedSquares) {
-      //   console.log(thisFinder.selectedSquares[activeSquare]);
-      //   // console.log(square);
-      // }
 
       for (let activeSquare in thisFinder.selectedSquares) {
         if (thisFinder.selectedSquares[activeSquare].markVolume == null && thisFinder.selectedSquares[activeSquare].name !== square.name) {
           returnFlag = false;
         }
         thisFinder.selectedSquares[activeSquare].markVolume = null;
-        // console.log(thisFinder.selectedSquares[activeSquare]);
       }
       console.log(' ');
 
@@ -351,7 +331,6 @@ class Finder {
     thisFinder.dom.header.innerHTML = 'THE BEST ROUTE IS...';
 
     thisFinder.dom.bottomButton.removeEventListener('click', thisFinder.setComputeShortestPathModeFunc);
-    // thisFinder.dom.sectionContainer.addEventListener('click', thisFinder.addClassActiveFunc);
     thisFinder.setResetAppFunc = thisFinder.addSetResetAppFunc.bind(thisFinder);
     thisFinder.dom.bottomButton.addEventListener('click', thisFinder.setResetAppFunc);
   }
@@ -370,7 +349,6 @@ class Finder {
 
           newArrayWithSquares.push(neighbourObj);
           neighbourObj.setMarkVolume(square.markVolume / 2);
-          neighbourObj.setPreviousMarkedSquare(square);
           thisFinder.squaresInOrder[neighbourObj.name] = neighbourObj;
           delete thisFinder.selectedSquares[neighbourObj.name];
         }
