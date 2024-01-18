@@ -79,12 +79,40 @@ footer p {
 
 @media (max-width: 1260px) {
   .splash-inner {
-    left: 12vw;
+    left: 16vw;
   }
 }
 
-@media (max-width: 1150px) {
+@media (max-width: 1100px) {
   .splash-inner {
-    left: 12vw;
+    left: 21vw;
+  }
+}
+
+@media (max-width: 850px) {
+  .splash-inner {
+    left: 16vw;
+  }
+}
+
+@media (max-width: 750px) {
+  .splash-inner {
+    left: 20vw;
+  }
+  .navigation ul {
+    justify-content: space-between;
+  }
+  .navigation {
+    left: 20%;
+    top: 1.5%;
+    width: 55%;
+  }
+}
+
+@media (max-width: 450px) {
+  .navigation {
+    left: 15%;
+    top: 1.5%;
+    width: 60%;
   }
 }

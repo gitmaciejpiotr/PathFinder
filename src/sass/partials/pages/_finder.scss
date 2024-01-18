@@ -35,6 +35,7 @@
   height: 50px;
   border: 1.25px solid white;
   background: none;
+  cursor: pointer;
 
   &:hover {
     background: $color-one;
@@ -83,9 +84,28 @@
   font-size: 14px;
 }
 
-/* TEXT IN BUTTON */ 
+/* RESPONSIVE SCREEN INFO */
 
-.hidden {
+.too-small-screen {
   visibility: hidden;
+  color: white;
   position: absolute;
+  top: 60%;
+  left: 10%;
+}
+
+.too-small-screen h1 {
+  letter-spacing: 5%;
+}
+
+@media (max-width: 1260px) {
+  .too-small-screen {
+    visibility: visible;
+  }
+
+  .matrix,
+  .bottom-button,
+  .finder-parag .parag-text {
+    visibility: hidden;
+  }
 }
